@@ -1,28 +1,28 @@
 package com.flowerbell.bwdepthdemo;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 
 
 import com.flowerbell.bwdepthdemo.ui.DepthActivity;
 
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+    protected int getLayoutResource() {
+        return R.layout.activity_main;
+    }
 
+    @Override
+    protected void onInitView() {
+
+    }
+
+    @Override
+    protected void onInitData() {
 
     }
 
