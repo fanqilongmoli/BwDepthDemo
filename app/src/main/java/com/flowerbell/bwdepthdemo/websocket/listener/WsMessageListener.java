@@ -12,8 +12,6 @@ public interface WsMessageListener {
 
     void onMessage(String text);
 
-    void onMessage(ByteString bytes);
-
     void onReconnect();
 
     void onClosing(int code, String reason);

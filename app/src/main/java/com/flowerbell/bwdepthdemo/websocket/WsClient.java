@@ -3,6 +3,8 @@ package com.flowerbell.bwdepthdemo.websocket;
 import android.content.Context;
 
 
+import com.flowerbell.bwdepthdemo.App;
+import com.flowerbell.bwdepthdemo.AppConfig;
 import com.flowerbell.bwdepthdemo.websocket.listener.WsStatusListener;
 import com.orhanobut.logger.Logger;
 
@@ -51,7 +53,7 @@ public final class WsClient {
                 .build();
 
         wsManager = new WsManager.Builder(context)
-                .wsUrl("wss://api.huobi.pro/ws")
+                .wsUrl(AppConfig.SOCKET_URL)
                 .needReconnect(true)
                 .client(okHttpClient)
                 .build();
@@ -61,13 +63,13 @@ public final class WsClient {
             public void onOpen(Response response) {
                 super.onOpen(response);
 
-                Logger.e("onOpen======>" + response.message());
+                Logger.d("onOpen======>" + response.message());
             }
 
             @Override
             public void onMessage(String text) {
                 super.onMessage(text);
-                Logger.e("onMessage======>" + text);
+                Logger.d("onMessage===text===>" + text);
             }
 
             @Override
@@ -89,32 +91,32 @@ public final class WsClient {
                     e.printStackTrace();
                 }
 
-                Logger.e("onMessage======>" + s);
+                Logger.d("onMessage===bytes===>" + s);
 
             }
 
             @Override
             public void onReconnect() {
                 super.onReconnect();
-                Logger.e("onReconnect======>");
+                Logger.d("onReconnect======>");
             }
 
             @Override
             public void onClosing(int code, String reason) {
                 super.onClosing(code, reason);
-                Logger.e("onClosing======>code=" + code + ";reason=" + reason);
+                Logger.d("onClosing======>code=" + code + ";reason=" + reason);
             }
 
             @Override
             public void onClosed(int code, String reason) {
                 super.onClosed(code, reason);
-                Logger.e("onClosed======>code=" + code + ";reason=" + reason);
+                Logger.d("onClosed======>code=" + code + ";reason=" + reason);
             }
 
             @Override
             public void onFailure(Throwable t, Response response) {
                 super.onFailure(t, response);
-                Logger.e("onFailure======>Throwable=" + t.getMessage());
+                Logger.d("onFailure======>Throwable=" + t.getMessage());
             }
         });
         wsManager.startConnect();

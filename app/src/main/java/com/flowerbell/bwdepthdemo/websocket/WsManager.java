@@ -11,12 +11,16 @@ import com.flowerbell.bwdepthdemo.websocket.listener.WsMessageListener;
 import com.flowerbell.bwdepthdemo.websocket.listener.WsStatusListener;
 import com.orhanobut.logger.Logger;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.GZIPInputStream;
 
 import io.socket.client.Socket;
 import okhttp3.OkHttpClient;
@@ -74,18 +78,24 @@ public class WsManager implements IWsManager {
                         @Override
                         public void run() {
                             wsStatusListener.onOpen(response);
+                            synchronized (WsManager.this.wsMessageListeners) {
+                                for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                                    wsMessageListener.onOpen(response);
+                                }
+                            }
                         }
                     });
                 } else {
                     wsStatusListener.onOpen(response);
+                    synchronized (WsManager.this.wsMessageListeners) {
+                        for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                            wsMessageListener.onOpen(response);
+                        }
+                    }
                 }
             }
 
-            synchronized (WsManager.this.wsMessageListeners) {
-                for (WsMessageListener wsMessageListener : wsMessageListeners) {
-                    wsMessageListener.onOpen(response);
-                }
-            }
+
         }
 
         @Override
@@ -96,18 +106,27 @@ public class WsManager implements IWsManager {
                         @Override
                         public void run() {
                             wsStatusListener.onMessage(bytes);
+
+                            synchronized (WsManager.this.wsMessageListeners) {
+                                for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                                    byte[] bytes1 = bytes.toByteArray();
+                                    wsMessageListener.onMessage(uncompressZipBytesToString(bytes1,"utf-8"));
+                                }
+                            }
                         }
                     });
                 } else {
                     wsStatusListener.onMessage(bytes);
+                    synchronized (WsManager.this.wsMessageListeners) {
+                        for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                            byte[] bytes1 = bytes.toByteArray();
+                            wsMessageListener.onMessage(uncompressZipBytesToString(bytes1,"utf-8"));
+                        }
+                    }
                 }
             }
 
-            synchronized (WsManager.this.wsMessageListeners) {
-                for (WsMessageListener wsMessageListener : wsMessageListeners) {
-                    wsMessageListener.onMessage(bytes);
-                }
-            }
+
         }
 
         @Override
@@ -118,18 +137,25 @@ public class WsManager implements IWsManager {
                         @Override
                         public void run() {
                             wsStatusListener.onMessage(text);
+
+                            synchronized (WsManager.this.wsMessageListeners) {
+                                for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                                    wsMessageListener.onMessage(text);
+                                }
+                            }
                         }
                     });
                 } else {
                     wsStatusListener.onMessage(text);
+                    synchronized (WsManager.this.wsMessageListeners) {
+                        for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                            wsMessageListener.onMessage(text);
+                        }
+                    }
                 }
             }
 
-            synchronized (WsManager.this.wsMessageListeners) {
-                for (WsMessageListener wsMessageListener : wsMessageListeners) {
-                    wsMessageListener.onMessage(text);
-                }
-            }
+
         }
 
         @Override
@@ -140,17 +166,26 @@ public class WsManager implements IWsManager {
                         @Override
                         public void run() {
                             wsStatusListener.onClosing(code, reason);
+
+                            synchronized (WsManager.this.wsMessageListeners) {
+                                for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                                    wsMessageListener.onClosing(code, reason);
+                                }
+                            }
                         }
+
+
                     });
                 } else {
                     wsStatusListener.onClosing(code, reason);
+                    synchronized (WsManager.this.wsMessageListeners) {
+                        for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                            wsMessageListener.onClosing(code, reason);
+                        }
+                    }
                 }
             }
-            synchronized (WsManager.this.wsMessageListeners) {
-                for (WsMessageListener wsMessageListener : wsMessageListeners) {
-                    wsMessageListener.onClosing(code, reason);
-                }
-            }
+
         }
 
         @Override
@@ -161,18 +196,25 @@ public class WsManager implements IWsManager {
                         @Override
                         public void run() {
                             wsStatusListener.onClosed(code, reason);
+
+                            synchronized (WsManager.this.wsMessageListeners) {
+                                for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                                    wsMessageListener.onClosed(code, reason);
+                                }
+                            }
                         }
                     });
                 } else {
                     wsStatusListener.onClosed(code, reason);
+                    synchronized (WsManager.this.wsMessageListeners) {
+                        for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                            wsMessageListener.onClosed(code, reason);
+                        }
+                    }
                 }
             }
 
-            synchronized (WsManager.this.wsMessageListeners) {
-                for (WsMessageListener wsMessageListener : wsMessageListeners) {
-                    wsMessageListener.onClosed(code, reason);
-                }
-            }
+
         }
 
         @Override
@@ -184,16 +226,20 @@ public class WsManager implements IWsManager {
                         @Override
                         public void run() {
                             wsStatusListener.onFailure(t, response);
+                            synchronized (WsManager.this.wsMessageListeners) {
+                                for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                                    wsMessageListener.onFailure(t, response);
+                                }
+                            }
                         }
                     });
                 } else {
                     wsStatusListener.onFailure(t, response);
-                }
-            }
-
-            synchronized (WsManager.this.wsMessageListeners) {
-                for (WsMessageListener wsMessageListener : wsMessageListeners) {
-                    wsMessageListener.onFailure(t, response);
+                    synchronized (WsManager.this.wsMessageListeners) {
+                        for (WsMessageListener wsMessageListener : wsMessageListeners) {
+                            wsMessageListener.onFailure(t, response);
+                        }
+                    }
                 }
             }
         }
@@ -353,7 +399,7 @@ public class WsManager implements IWsManager {
     //发送消息
     @Override
     public boolean sendMessage(String msg) {
-        Logger.e("发送消息======" + msg);
+        Logger.d("发送消息======" + msg);
         return send(msg);
     }
 
@@ -425,6 +471,26 @@ public class WsManager implements IWsManager {
     }
 
     // ===============================================================  //
+
+    public static String uncompressZipBytesToString(byte[] bytes, String encoding) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        try {
+            GZIPInputStream ungzip = new GZIPInputStream(in);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = ungzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            return out.toString(encoding);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 }

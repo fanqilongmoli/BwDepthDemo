@@ -5,16 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.flowerbell.bwdepthdemo.ui.DepthActivity">
-    <Button
-        android:id="@+id/loadData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="加载数据"
-        />
-    <com.flowerbell.bwdepthdemo.depth.BwDepthView
-        android:id="@+id/bwDepthView"
+    tools:context="com.flowerbell.bwdepthdemo.ui.KlineActivity">
+    <com.flowerbell.bwdepthdemo.kline.BwKlineView
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 </LinearLayout>

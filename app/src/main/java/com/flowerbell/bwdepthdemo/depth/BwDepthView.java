@@ -71,6 +71,9 @@ public class BwDepthView extends LinearLayout implements OnChartGestureListener 
 
         mChart.getDescription().setEnabled(false);
 
+        //自定义偏移量（边上的偏移量）
+        mChart.setViewPortOffsets(0,10,0,50);
+
 
         // 例子
         Legend legend = mChart.getLegend();
@@ -193,6 +196,8 @@ public class BwDepthView extends LinearLayout implements OnChartGestureListener 
         LineData data = new LineData(dataSets);
 
         mChart.setData(data);
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
 
     }
 

@@ -27,7 +27,7 @@ public class DepthUtil {
         sellDepthList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(json);
-            JSONObject tick = jsonObject.optJSONObject("tick");
+            JSONObject tick = jsonObject.optJSONObject("data");
             // 买盘
             JSONArray bids = tick.optJSONArray("bids");
             DepthEntity depthEntity;

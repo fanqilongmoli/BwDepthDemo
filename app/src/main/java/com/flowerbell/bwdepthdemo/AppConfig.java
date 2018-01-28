@@ -10,7 +10,7 @@ package com.flowerbell.bwdepthdemo;
 public class AppConfig {
     // 测试环境地址
 //    public static final String BASE_URL = "http://192.168.2.115";
-    public static final String SOCKET_URL = "http://192.168.2.115:3000";
+    public static final String SOCKET_URL = "wss://api.huobi.pro/ws";
 //
 //    public static final String BASE_URL = "http://192.168.2.190:8080";
     public static final String BASE_URL = "http://et8meh.natappfree.cc";
