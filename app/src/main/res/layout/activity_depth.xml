@@ -4,13 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.flowerbell.bwdepthdemo.MainActivity">
-    <Button
-        android:id="@+id/btn_depth"
+    tools:context="com.flowerbell.bwdepthdemo.ui.DepthActivity">
+    <com.flowerbell.bwdepthdemo.depth.BwDepthView
+        android:id="@+id/bwDepthView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="深度图"/>
-
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

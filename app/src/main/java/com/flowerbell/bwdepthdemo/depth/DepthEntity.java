@@ -1,4 +1,4 @@
-package com.flowerbell.bwdepthdemo;
+package com.flowerbell.bwdepthdemo.depth;
 
 import java.math.BigDecimal;
 

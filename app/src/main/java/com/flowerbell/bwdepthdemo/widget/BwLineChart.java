@@ -1,4 +1,4 @@
-package com.flowerbell.bwdepthdemo;
+package com.flowerbell.bwdepthdemo.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
