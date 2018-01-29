@@ -3,4 +3,24 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--图表-->
+    <color name="marker_color">#be945c</color>
+    <color name="marker_text_color">#333333</color>
+    <color name="chart_grid_color">#333333</color>
+
+    <color name="ma5">#823E66</color>
+    <color name="ma10">#B99C7A</color>
+    <color name="ma20">#3C7193</color>
+    <color name="ma30">#7F9976</color>
+
+    <color name="increasing_color">#ff3b30</color>
+    <color name="decreasing_color">#4cd964</color>
+    <color name="normal_line_color">#be945c</color>
+    <color name="ave_color">#bbbbbb</color>
+    <color name="axis_color">#ffffff</color>
+    <color name="chart_info_color">#88000000</color>
+    <color name="chart_no_data_color">#be945c</color>
+    <color name="highlight_color">#be945c</color>
+    <color name="limit_color">#adadad</color>
 </resources>

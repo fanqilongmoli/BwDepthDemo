@@ -6,6 +6,7 @@ import android.view.View;
 
 
 import com.flowerbell.bwdepthdemo.ui.DepthActivity;
+import com.flowerbell.bwdepthdemo.ui.KlineActivity;
 
 import butterknife.OnClick;
 
@@ -27,8 +28,14 @@ public class MainActivity extends BaseActivity {
     }
 
     @OnClick(R.id.btn_depth)
-    public void clickDepth(View view){
-        Intent intent = new Intent(this,DepthActivity.class);
+    public void clickDepth(View view) {
+        Intent intent = new Intent(this, DepthActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btn_kline)
+    public void clickKline() {
+        Intent intent = new Intent(this, KlineActivity.class);
         startActivity(intent);
     }
 
