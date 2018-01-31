@@ -117,7 +117,6 @@ public class BwKlineView extends LinearLayout {
         initChartPrice();
         // 数量 等等
         initChartVolume();
-
         // 设置监听
         initChartListener();
 
