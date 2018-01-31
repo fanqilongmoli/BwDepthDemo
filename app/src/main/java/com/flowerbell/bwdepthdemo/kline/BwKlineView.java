@@ -37,6 +37,9 @@ import com.github.mikephil.charting.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by MIT on 2018/1/28.
@@ -47,6 +50,13 @@ public class BwKlineView extends LinearLayout {
     private Context mContext;
     private CombinedChart mChartPrice;
     private CombinedChart mChartVolume;
+    private Lock lock = new ReentrantLock();
+
+
+    public int MAX_COUNT_LINE = 100;
+    public int MIN_COUNT_LINE = 50;
+    public int MAX_COUNT_K = 200;
+    public int MIN_COUNT_K = 30;
 
     /**
      * average line
@@ -64,12 +74,19 @@ public class BwKlineView extends LinearLayout {
             mChartPrice.setAutoScaleMinMaxEnabled(true);
             mChartVolume.setAutoScaleMinMaxEnabled(true);
 
+
+            mChartPrice.getXAxis().setAxisMinimum(0);
+            mChartPrice.getXAxis().setAxisMaximum(mData.size());
+            mChartVolume.getXAxis().setAxisMinimum(0);
+            mChartVolume.getXAxis().setAxisMaximum(mData.size());
+
+
             mChartPrice.notifyDataSetChanged();
             mChartVolume.notifyDataSetChanged();
 
             mChartPrice.invalidate();
             mChartVolume.invalidate();
-            handler.sendEmptyMessageDelayed(0, 1000);
+//            handler.sendEmptyMessageDelayed(0, 1000);
             return true;
         }
     });
@@ -114,6 +131,7 @@ public class BwKlineView extends LinearLayout {
         mChartPrice.setScaleYEnabled(false);
         mChartPrice.getDescription().setEnabled(false);
         mChartPrice.setAutoScaleMinMaxEnabled(true);
+        mChartPrice.setMinOffset(3f);
 
         // 不显示 例子
         Legend lineChartLegend = mChartPrice.getLegend();
@@ -123,14 +141,13 @@ public class BwKlineView extends LinearLayout {
         mChartPrice.getXAxis().setDrawLabels(false);
         mChartPrice.getXAxis().setDrawAxisLine(false);
         mChartPrice.getXAxis().setDrawGridLines(false);
-        mChartPrice.getXAxis().setAxisMinimum(-0.5f);
 
         // left Y
         mChartPrice.getAxisLeft().setLabelCount(5, true);
         mChartPrice.getAxisLeft().setDrawLabels(true);
         mChartPrice.getAxisLeft().setDrawGridLines(false);
         mChartPrice.getAxisLeft().setDrawAxisLine(false);
-        mChartPrice.getAxisLeft().setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        mChartPrice.getAxisLeft().setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
 
         // right Y
         mChartPrice.getAxisRight().setLabelCount(5, true);
@@ -146,7 +163,6 @@ public class BwKlineView extends LinearLayout {
 
         mChartVolume.setScaleEnabled(true);
         mChartVolume.setDrawBorders(false);
-        mChartVolume.setBorderWidth(1);
         mChartVolume.setDragEnabled(true);
         mChartVolume.setScaleYEnabled(false);
         mChartVolume.getDescription().setEnabled(false);
@@ -163,7 +179,6 @@ public class BwKlineView extends LinearLayout {
         mChartVolume.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         mChartVolume.getXAxis().setLabelCount(5, true);
         mChartVolume.getXAxis().setAvoidFirstLastClipping(true);
-        mChartVolume.getXAxis().setAxisMinimum(-0.5f);
 
         //xAxisVolume.setValueFormatter(new KLineXValueFormatter(mData));
 
@@ -171,9 +186,9 @@ public class BwKlineView extends LinearLayout {
         mChartVolume.getAxisLeft().setDrawLabels(true);
         mChartVolume.getAxisLeft().setDrawGridLines(false);
         mChartVolume.getAxisLeft().setLabelCount(3, true);
-        mChartVolume.getAxisLeft().setDrawAxisLine(false);
         mChartVolume.getAxisLeft().setAxisMinimum(0);
-        mChartVolume.getAxisLeft().setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        mChartVolume.getAxisLeft().setDrawAxisLine(false);
+        mChartVolume.getAxisLeft().setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
         mChartVolume.getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -239,7 +254,9 @@ public class BwKlineView extends LinearLayout {
         combinedData.setData(lineData);
         combinedData.setData(candleData);
 
+
         mChartPrice.setData(combinedData);
+        mChartPrice.setVisibleXRange(MAX_COUNT_LINE, MIN_COUNT_LINE);
         mChartPrice.notifyDataSetChanged();
         mChartPrice.invalidate();
         mChartPrice.moveViewToX(combinedData.getEntryCount());
@@ -259,6 +276,8 @@ public class BwKlineView extends LinearLayout {
         combinedData.setData(barData);
         mChartVolume.setData(combinedData);
 
+        mChartVolume.setVisibleXRange(MAX_COUNT_LINE, MIN_COUNT_LINE);
+
         setOffset();
         mChartVolume.notifyDataSetChanged();
         mChartVolume.invalidate();
@@ -268,7 +287,12 @@ public class BwKlineView extends LinearLayout {
     }
 
     public void addKData(KlineEntity klineEntity) {
-
+        try {
+            lock.tryLock(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        }
         klineEntity = KlineUtil.calculateHisData(klineEntity, mData);
         CombinedData combinedData = mChartPrice.getData();
         LineData priceData = combinedData.getLineData();
@@ -285,6 +309,10 @@ public class BwKlineView extends LinearLayout {
             kSet.removeEntry(index);
             aveSet.removeEntry(index);
             volSet.removeEntry(index);
+            ma5Set.removeEntry(index);
+            ma10Set.removeEntry(index);
+            ma20Set.removeEntry(index);
+            ma30Set.removeEntry(index);
             mData.remove(index);
         }
         mData.add(klineEntity);
@@ -296,11 +324,23 @@ public class BwKlineView extends LinearLayout {
         ma20Set.addEntry(new BarEntry(ma20Set.getEntryCount(), (float) klineEntity.getMa20()));
         ma30Set.addEntry(new BarEntry(ma30Set.getEntryCount(), (float) klineEntity.getMa30()));
 
+        mChartPrice.setAutoScaleMinMaxEnabled(true);
+        mChartVolume.setAutoScaleMinMaxEnabled(true);
 
-//        mChartPrice.getXAxis().setAxisMinimum(-0.5f);
-//        mChartPrice.getXAxis().setAxisMaximum(mData.size() - 0.5f);
-//        mChartVolume.getXAxis().setAxisMinimum(-0.5f);
-//        mChartVolume.getXAxis().setAxisMaximum(mData.size() - 0.5f);
+
+        mChartPrice.getXAxis().setAxisMinimum(0);
+        mChartPrice.getXAxis().setAxisMaximum(mData.size());
+        mChartVolume.getXAxis().setAxisMinimum(0);
+        mChartVolume.getXAxis().setAxisMaximum(mData.size());
+
+
+        mChartPrice.notifyDataSetChanged();
+        mChartVolume.notifyDataSetChanged();
+
+        mChartPrice.invalidate();
+        mChartVolume.invalidate();
+
+        lock.unlock();
 //
 //        mChartPrice.notifyDataSetChanged();
 //        mChartPrice.invalidate();
@@ -372,7 +412,8 @@ public class BwKlineView extends LinearLayout {
         set1.setDrawIcons(false);
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
         set1.setShadowColor(Color.DKGRAY);
-        set1.setShadowWidth(0.7f);
+        set1.setShadowWidth(1f);
+
         set1.setDecreasingColor(ContextCompat.getColor(getContext(), R.color.decreasing_color));
         set1.setDecreasingPaintStyle(Paint.Style.FILL);
         set1.setShadowColorSameAsCandle(true);
@@ -387,6 +428,7 @@ public class BwKlineView extends LinearLayout {
     private BarDataSet setBar(ArrayList<BarEntry> barEntries) {
         BarDataSet barDataSet = new BarDataSet(barEntries, "vol");
         barDataSet.setHighLightAlpha(120);
+
         barDataSet.setHighLightColor(getResources().getColor(R.color.highlight_color));
         barDataSet.setDrawValues(false);
         barDataSet.setHighlightEnabled(true);

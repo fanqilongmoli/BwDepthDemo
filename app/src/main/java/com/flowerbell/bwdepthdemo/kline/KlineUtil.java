@@ -27,14 +27,14 @@ public class KlineUtil {
         int length = tickArray.length();
         for (int i = 0; i < length; i++) {
 
-//                    "amount": 17.4805,
-//                    "count":  27,
-//                    "id":     1494478080,
-//                    "open":   10050.00,
-//                    "close":  10058.00,
-//                    "low":    10050.00,
-//                    "high":   10058.00,
-//                    "vol":    175798.757708
+//                    "id": K线id,
+//                    "amount": 成交量,
+//                    "count": 成交笔数,
+//                    "open": 开盘价,
+//                    "close": 收盘价,当K线为最晚的一根时，是最新成交价
+//                    "low": 最低价,
+//                    "high": 最高价,
+//                    "vol": 成交额, 即 sum(每一笔成交价 * 该笔的成交量)
             JSONObject object = tickArray.optJSONObject(i);
             klineEntity = new KlineEntity();
             klineEntity.setDate(object.optLong("id"));
@@ -42,7 +42,7 @@ public class KlineUtil {
             klineEntity.setClose(object.optDouble("close"));
             klineEntity.setLow(object.optDouble("low"));
             klineEntity.setHigh(object.optDouble("high"));
-            klineEntity.setVol(object.optDouble("vol"));
+            klineEntity.setVol(object.optDouble("amount"));
 
             klineEntities.add(klineEntity);
         }
@@ -57,7 +57,7 @@ public class KlineUtil {
         klineEntity.setClose(object.optDouble("close"));
         klineEntity.setLow(object.optDouble("low"));
         klineEntity.setHigh(object.optDouble("high"));
-        klineEntity.setVol(object.optDouble("vol"));
+        klineEntity.setVol(object.optDouble("amount"));
         return klineEntity;
 
     }
