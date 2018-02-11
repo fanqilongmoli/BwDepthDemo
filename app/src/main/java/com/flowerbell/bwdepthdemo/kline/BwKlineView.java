@@ -86,7 +86,6 @@ public class BwKlineView extends LinearLayout {
 
             mChartPrice.invalidate();
             mChartVolume.invalidate();
-//            handler.sendEmptyMessageDelayed(0, 1000);
             return true;
         }
     });
@@ -125,6 +124,7 @@ public class BwKlineView extends LinearLayout {
 
 
     private void initChartPrice() {
+        mChartPrice.setBackgroundColor(mContext.getResources().getColor(R.color.bw_comm_bg));
         mChartPrice.setScaleEnabled(true);
         mChartPrice.setDrawBorders(false);
         mChartPrice.setDragEnabled(true);
@@ -160,7 +160,7 @@ public class BwKlineView extends LinearLayout {
     }
 
     private void initChartVolume() {
-
+        mChartVolume.setBackgroundColor(mContext.getResources().getColor(R.color.bw_comm_bg));
         mChartVolume.setScaleEnabled(true);
         mChartVolume.setDrawBorders(false);
         mChartVolume.setDragEnabled(true);
@@ -366,7 +366,7 @@ public class BwKlineView extends LinearLayout {
             lineDataSetMa.setCircleColor(ContextCompat.getColor(mContext, R.color.normal_line_color));
         } else*/
         if (type == AVE_LINE) {
-            lineDataSetMa.setColor(getResources().getColor(R.color.ave_color));
+            lineDataSetMa.setColor(getResources().getColor(R.color.bw_border));
             lineDataSetMa.setCircleColor(android.R.color.transparent);
             lineDataSetMa.setHighlightEnabled(false);
         } else if (type == MA5) {
@@ -413,13 +413,14 @@ public class BwKlineView extends LinearLayout {
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
         set1.setShadowColor(Color.DKGRAY);
         set1.setShadowWidth(1f);
-
-        set1.setDecreasingColor(ContextCompat.getColor(getContext(), R.color.decreasing_color));
+        // 降低
+        set1.setDecreasingColor(ContextCompat.getColor(getContext(), R.color.bw_chat_down));
         set1.setDecreasingPaintStyle(Paint.Style.FILL);
         set1.setShadowColorSameAsCandle(true);
-        set1.setIncreasingColor(ContextCompat.getColor(getContext(), R.color.increasing_color));
+        //上升
+        set1.setIncreasingColor(ContextCompat.getColor(getContext(), R.color.bw_chat_up));
         set1.setIncreasingPaintStyle(Paint.Style.FILL);
-        set1.setNeutralColor(ContextCompat.getColor(getContext(), R.color.increasing_color));
+        set1.setNeutralColor(ContextCompat.getColor(getContext(), R.color.bw_chat_up));
         set1.setDrawValues(false);
         set1.setHighlightEnabled(true);
         return set1;
@@ -429,10 +430,10 @@ public class BwKlineView extends LinearLayout {
         BarDataSet barDataSet = new BarDataSet(barEntries, "vol");
         barDataSet.setHighLightAlpha(120);
 
-        barDataSet.setHighLightColor(getResources().getColor(R.color.highlight_color));
+        barDataSet.setHighLightColor(getResources().getColor(R.color.bw_comm_blue));
         barDataSet.setDrawValues(false);
         barDataSet.setHighlightEnabled(true);
-        barDataSet.setColors(getResources().getColor(R.color.increasing_color), getResources().getColor(R.color.decreasing_color));
+        barDataSet.setColors(getResources().getColor(R.color.bw_chat_up), getResources().getColor(R.color.bw_chat_down));
         return barDataSet;
     }
 
